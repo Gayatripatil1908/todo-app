@@ -1,82 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo App</title>
     <style>
-        body{
+        body {
             background-color: black;
         }
-        
-      .heading {
-        text-align: center;
-        color: white;
-      }
-      .todo-item {
-        border: 4px double #0055ff;
-        font-size: 25px;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 5px;
-        background-color: #ccddff;
-        color: #0055ff;
-        display: flex;
-        justify-content: space-between;
-      }
 
-      .btn-del {
-       height: 30px;
-       margin-right: 20px;
-      }
+        .heading {
+            text-align: center;
+            color: white;
+        }
 
-      .tasks-container {
-        height: 500px;
-        overflow-y: scroll;
-      }
+        .todo-item {
+            border: 4px double #0055ff;
+            font-size: 25px;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 5px;
+            background-color: #ccddff;
+            color: #0055ff;
+            display: flex;
+            justify-content: space-between;
+        }
 
-      .task-input-container {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin: 10px;
-        margin-top: 100px;
-      }
+        .btn-del {
+            height: 30px;
+            margin-right: 20px;
+        }
 
-      .task-input {
-        width: 50%;
-        border-radius: 10px;
-        padding: 5px 10px;
-        font-size: 20px;
-        border: 1px solid #0055ff;
-      }
+        .tasks-container {
+            height: 500px;
+            overflow-y: scroll;
+        }
 
-      .btn-add {
-        border-radius: 40px;
-        background-color: #0055ff;
-        color: #fff;
-        padding: 15px 30px;
-        border: none;
-        cursor: pointer;
-      }
-      
+        .task-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 10px;
+            margin-top: 100px;
+        }
+
+        .task-input {
+            width: 50%;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 20px;
+            border: 1px solid #0055ff;
+        }
+
+        .btn-add {
+            border-radius: 40px;
+            background-color: #0055ff;
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
     <h1 class="heading">ToDo App</h1>
 
     <div id="tasks-container" class="tasks-container"></div>
 
     <div class="task-input-container">
-      <input
-        type="text"
-        id="task-input"
-        placeholder="Enter a task"
-        class="task-input"
-      />
-      <button onclick="addTask()" class="btn-add">Add Task</button>
+        <input type="text" id="task-input" placeholder="Enter a task" class="task-input" />
+        <button onclick="addTask()" class="btn-add">Add Task</button>
     </div>
 
-    
+    <script>
+        const tasks = [];
+
+        function loadFromLocalStorage() {
+            const allTasks = JSON.parse(localStorage.getItem("allTasks"));
+
+            if (allTasks) {
+                tasks.push(...allTasks);
+            }
+
+            loadTasks();
+        }
+        loadFromLocalStorage();
+
+        function loadTasks() {
+            localStorage.setItem("allTasks", JSON.stringify(tasks));
+
+            const tasksContainer = document.getElementById("tasks-container");
+            tasksContainer.innerHTML = "";
+
+            for (const task of tasks) {
+                tasksContainer.innerHTML += `
+          <div class="todo-item">
+            ${task}
+            
+              <img src="icon/bin.png" class="btn-del" onclick="deleteTask('${task}')">
+            
+          </div>
+          `;
+            }
+        }
+
+        function deleteTask(task) {
+            const taskIndex = tasks.indexOf(task);
+            tasks.splice(taskIndex, 1);
+
+            loadTasks();
+        }
+
+        function addTask() {
+            const taskInputElement = document.getElementById("task-input");
+            const task = taskInputElement.value;
+
+            if (!task) {
+                alert("Please enter a task");
+                return;
+            }
+
+            tasks.unshift(task);
+            loadTasks();
+
+            taskInputElement.value = "";
+        }
+    </script>
+
+
 </body>
+
 </html>
